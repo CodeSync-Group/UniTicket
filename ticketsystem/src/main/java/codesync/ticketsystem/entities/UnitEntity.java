@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "unit")
+@Table(name = "units")
 public class UnitEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false)
