@@ -14,10 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
+
+
 @Service
 public class JwtService {
-
-    private static final String SECRET_KEY = "K188319299UD19912391FJ118389931893281J198319UF9118329183";
+    @Value("${SECRET_KEY}")
+    private String SECRET_KEY;
 
     public String getToken(UserDetails user) {
         return getToken(new HashMap<>(), user);
