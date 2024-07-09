@@ -1,9 +1,9 @@
 package codesync.ticketsystem.repositories;
 
-import codesync.ticketsystem.entities.ProfileEntity;
+import codesync.ticketsystem.entities.TicketEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProfileRepository extends JpaRepository<ProfileEntity, Long> {
+public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
 }
