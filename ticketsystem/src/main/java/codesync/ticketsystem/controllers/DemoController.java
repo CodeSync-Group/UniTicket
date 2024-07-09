@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/v1")
-@RequiredArgsConstructor
+@RequestMapping("/api/")
 public class DemoController {
     @PostMapping("demo")
     public String welcome(){

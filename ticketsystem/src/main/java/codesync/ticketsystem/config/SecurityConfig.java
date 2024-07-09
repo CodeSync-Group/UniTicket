@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/admin/**").hasAuthority("ADMIN")
 
                                 //REMOVE THIS CONFIG BEFORE RELEASE TO .authenticated()
                                 .anyRequest().permitAll())

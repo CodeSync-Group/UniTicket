@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
-@RequestMapping("/api/users")
-@CrossOrigin("*")
-public class UserController {
+@RequestMapping("/admin")
+public class AdminController {
     @Autowired
     UserService userService;
 
@@ -27,9 +27,9 @@ public class UserController {
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content) })
-    @PutMapping("/")
-    public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user) throws Exception {
-        UserEntity newUser = userService.updateUser(user);
+    @PutMapping("/userRole")
+    public ResponseEntity<UserEntity> updateUserRole(@RequestBody UserEntity user) throws Exception {
+        UserEntity newUser = userService.updateUserRole(user);
         return  ResponseEntity.ok(newUser);
     }
 }

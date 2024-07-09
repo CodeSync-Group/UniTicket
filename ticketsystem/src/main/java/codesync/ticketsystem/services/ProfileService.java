@@ -19,7 +19,7 @@ public class ProfileService {
 
     public ProfileEntity updateProfile(ProfileEntity profile) {
         ProfileEntity existingProfile = profileRepository.findById(profile.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Profile with id " + profile.getId() + "does not exist."));
+                .orElseThrow(() -> new EntityNotFoundException("Profile with id " + profile.getId() + " does not exist."));
 
         if (profile.getFirstname() != null) {
             existingProfile.setFirstname(profile.getFirstname());
