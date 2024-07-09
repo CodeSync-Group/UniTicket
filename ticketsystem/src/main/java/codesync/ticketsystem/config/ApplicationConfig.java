@@ -1,4 +1,4 @@
-package codesync.ticketsystem.Config;
+package codesync.ticketsystem.config;
 
 import codesync.ticketsystem.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;

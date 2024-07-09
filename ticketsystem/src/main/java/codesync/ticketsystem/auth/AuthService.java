@@ -1,4 +1,4 @@
-package codesync.ticketsystem.Auth;
+package codesync.ticketsystem.auth;
 
 import codesync.ticketsystem.entities.ProfileEntity;
 import codesync.ticketsystem.entities.UserEntity;

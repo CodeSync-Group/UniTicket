@@ -1,4 +1,4 @@
-package codesync.ticketsystem.Auth;
+package codesync.ticketsystem.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

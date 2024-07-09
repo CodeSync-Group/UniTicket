@@ -1,4 +1,4 @@
-package codesync.ticketsystem.Auth;
+package codesync.ticketsystem.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
