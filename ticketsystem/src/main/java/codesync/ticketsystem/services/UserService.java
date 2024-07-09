@@ -30,7 +30,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserEntity updateUser(UserEntity user) throws Exception {
+    public UserEntity updateUser(UserEntity user) {
         UserEntity existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + user.getId() + " does not exist."));
 
@@ -40,10 +40,6 @@ public class UserService {
 
         if (user.getUsername() != null) {
             existingUser.setUsername(user.getUsername());
-        }
-
-        if (user.getProfile() != null) {
-            existingUser.setProfile(user.getProfile());
         }
 
         if (user.getUnit() != null) {
