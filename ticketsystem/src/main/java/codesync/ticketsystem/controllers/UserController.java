@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
 @CrossOrigin("*")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     UserService userService;
