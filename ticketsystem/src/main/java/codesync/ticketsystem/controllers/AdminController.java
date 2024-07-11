@@ -18,7 +18,7 @@ public class AdminController {
     @Autowired
     UserService userService;
 
-    @Operation(summary = "Update a user")
+    @Operation(summary = "Update a user role")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated correctly",
                     content = { @Content(mediaType = "application/json",
