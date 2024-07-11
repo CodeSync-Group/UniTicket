@@ -33,14 +33,6 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
-        UserEntity user = UserEntity.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(RoleEntity.EXTERNAL)
-                .build();
-
-        userRepository.save(user);
-
         ProfileEntity profile = ProfileEntity.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -48,7 +40,16 @@ public class AuthService {
                 .email(request.getEmail())
                 .build();
 
-        profileRepository.save(profile);
+        ProfileEntity savedProfile = profileRepository.save(profile);
+
+        UserEntity user = UserEntity.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(RoleEntity.EXTERNAL)
+                .profile(savedProfile)
+                .build();
+
+        userRepository.save(user);
 
         return AuthResponse.builder()
                 .token(jwtService.getToken(user))

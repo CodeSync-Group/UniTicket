@@ -24,6 +24,7 @@ public class ProfileEntity {
     private String lastname;
     private String secondSurname;
 
+    @Column(unique = true, nullable = false)
     private String email;
 
     private String description;
@@ -32,5 +33,6 @@ public class ProfileEntity {
 
     private LocalDate birthday;
 
-    private String picture;
+    @Column(columnDefinition="bytea")
+    private byte[] picture;
 }
