@@ -1,7 +1,5 @@
 package codesync.ticketsystem.controllers;
 
-
-import codesync.ticketsystem.entities.DepartmentEntity;
 import codesync.ticketsystem.entities.FacultyEntity;
 import codesync.ticketsystem.services.FacultyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,9 +16,9 @@ public class FacultyController {
     @Autowired
     FacultyService facultyService;
 
-    @Operation(summary = "Get departments")
+    @Operation(summary = "Get faculties")
     @GetMapping("/")
-    public ResponseEntity<List<FacultyEntity>> getDepartments() {
+    public ResponseEntity<List<FacultyEntity>> getFaculties() {
         List<FacultyEntity> faculties = facultyService.getFaculties();
         return ResponseEntity.ok(faculties);
     }
