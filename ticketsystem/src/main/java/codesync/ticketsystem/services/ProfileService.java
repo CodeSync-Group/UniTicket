@@ -7,14 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProfileService {
@@ -23,6 +27,10 @@ public class ProfileService {
 
     public List<ProfileEntity> getProfiles() {
         return profileRepository.findAll();
+    }
+
+    public Optional<ProfileEntity> getProfileByEmail(String email) {
+        return profileRepository.findByEmail(email);
     }
 
     public Optional<ProfileEntity> getProfileById(Long id) {
@@ -102,6 +110,56 @@ public class ProfileService {
             return bytes;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
+        }
+    }
+
+    public byte[] handleImageDownload(String imageUrl) throws Exception {
+        ImageInputStream iis = null;
+        try {
+            URL url = new URL(imageUrl);
+            iis = ImageIO.createImageInputStream(url.openStream());
+            Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(iis);
+
+            if (!imageReaders.hasNext()) {
+                throw new Exception("No image readers found for the image");
+            }
+
+            ImageReader reader = imageReaders.next();
+            reader.setInput(iis);
+            String formatName = reader.getFormatName();
+
+            System.out.println("FileExtension: " + formatName);
+
+            if (!formatName.equalsIgnoreCase("jpg")
+                    && !formatName.equalsIgnoreCase("png")
+                    && !formatName.equalsIgnoreCase("jpeg")) {
+                throw new Exception("Only JPG, JPEG & PNG files allowed");
+            }
+
+            BufferedImage image = reader.read(0);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, formatName, baos);
+            byte[] bytes = baos.toByteArray();
+
+            int maxFileSize = 5 * 1024 * 1024; // 5MB
+            if (bytes.length > maxFileSize) {
+                throw new Exception("File size must be less or equal to 5MB");
+            }
+
+            System.out.println("Byte array length: " + bytes.length);
+
+            return bytes;
+        } catch (IOException e) {
+            throw new Exception("Failed to download or process image: " + e.getMessage(), e);
+        } finally {
+            if (iis != null) {
+                try {
+                    iis.close();
+                } catch (IOException ex) {
+                    System.err.println("Failed to close ImageInputStream: " + ex.getMessage());
+                }
+            }
         }
     }
 }

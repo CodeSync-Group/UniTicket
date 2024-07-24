@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,6 +29,18 @@ public class UserService {
 
     public List<UserEntity> getUsers() {
         return userRepository.findAll();
+    }
+
+    public Optional<UserEntity> getUserByProfileId(Long id) {
+        return userRepository.findByProfileId(id);
+    }
+
+    public Optional<UserEntity> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public Boolean userExistByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     public UserEntity updateUser(UserEntity user) {
