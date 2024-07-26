@@ -1,10 +1,10 @@
 package codesync.ticketsystem.services;
 
-import codesync.ticketsystem.entities.ProfileEntity;
 import codesync.ticketsystem.entities.UnitEntity;
 import codesync.ticketsystem.repositories.UnitRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +14,7 @@ public class UnitService {
     @Autowired
     UnitRepository unitRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UnitEntity saveUnit(UnitEntity unit) {
         return unitRepository.save(unit);
     }
@@ -22,6 +23,7 @@ public class UnitService {
         return unitRepository.findAll();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UnitEntity updateUnit(UnitEntity unit) {
         UnitEntity existingUnit = unitRepository.findById(unit.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Unit with id " + unit.getId() + " does not exist."));
@@ -37,6 +39,7 @@ public class UnitService {
         return unitRepository.save(existingUnit);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteUnit(Long id) throws Exception {
         try {
             unitRepository.deleteById(id);

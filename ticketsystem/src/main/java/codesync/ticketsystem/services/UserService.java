@@ -3,16 +3,17 @@ package codesync.ticketsystem.services;
 import codesync.ticketsystem.entities.RoleEntity;
 import codesync.ticketsystem.entities.UserEntity;
 import codesync.ticketsystem.jwt.JwtAuthenticationFilter;
-import codesync.ticketsystem.jwt.JwtService;
 import codesync.ticketsystem.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,8 +45,21 @@ public class UserService {
     }
 
     public UserEntity updateUser(UserEntity user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new SecurityException("User is not authenticated");
+        }
+
         UserEntity existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + user.getId() + " does not exist."));
+
+        String currentUsername = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
+
+        if (!currentUsername.equals(existingUser.getUsername()) && !isAdmin) {
+            throw new SecurityException("Not authorized to update this user");
+        }
 
         if (user.getPassword() != null) {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -62,6 +76,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserEntity updateUserRole(UserEntity user) throws Exception {
         UserEntity existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + user.getId() + " does not exist."));
@@ -77,6 +92,7 @@ public class UserService {
         throw new Exception("Try a different role.");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteUser(Long id) throws Exception {
         try {
             userRepository.deleteById(id);

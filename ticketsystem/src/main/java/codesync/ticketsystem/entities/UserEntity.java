@@ -27,6 +27,7 @@ public class UserEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
     @OneToOne
@@ -38,6 +39,7 @@ public class UserEntity implements UserDetails {
     private UnitEntity unit;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RoleEntity role;
 
     @Override

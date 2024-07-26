@@ -16,7 +16,7 @@ public class ProfileController {
 
     @PutMapping("/")
     public ResponseEntity<ProfileEntity> updateProfile(@RequestPart("file") MultipartFile file, @RequestPart("profile") ProfileEntity profile) throws Exception {
-        if (file != null) {
+        if (!file.isEmpty()) {
             byte[] picture = profileService.handleFileUpload(file);
             profile.setPicture(picture);
         }

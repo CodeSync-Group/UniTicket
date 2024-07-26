@@ -1,9 +1,14 @@
 package codesync.ticketsystem.services;
 
 import codesync.ticketsystem.entities.ProfileEntity;
+import codesync.ticketsystem.entities.UserEntity;
 import codesync.ticketsystem.repositories.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,18 +17,16 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
 public class ProfileService {
     @Autowired
     ProfileRepository profileRepository;
+    @Autowired
+    UserService userService;
 
     public List<ProfileEntity> getProfiles() {
         return profileRepository.findAll();
@@ -38,8 +41,24 @@ public class ProfileService {
     }
 
     public ProfileEntity updateProfile(ProfileEntity profile) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new SecurityException("User is not authenticated");
+        }
+
         ProfileEntity existingProfile = profileRepository.findById(profile.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Profile with id " + profile.getId() + " does not exist."));
+
+        UserEntity existingUser = userService.getUserByProfileId (existingProfile.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User with profile id " + existingProfile.getId() + " does not exist."));
+
+        String currentUsername = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
+
+        if (!currentUsername.equals(existingUser.getUsername()) && !isAdmin) {
+            throw new SecurityException("Not authorized to update this user");
+        }
 
         if (profile.getFirstname() != null) {
             existingProfile.setFirstname(profile.getFirstname());
@@ -69,13 +88,10 @@ public class ProfileService {
             existingProfile.setBirthday(profile.getBirthday());
         }
 
-        if (profile.getPicture() != null) {
-            existingProfile.setPicture(profile.getPicture());
-        }
-
         return profileRepository.save(existingProfile);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean deleteProfile(Long id) throws Exception {
         try {
             profileRepository.deleteById(id);
