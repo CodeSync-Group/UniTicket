@@ -21,8 +21,6 @@ public class TicketEntity {
     private String subject;
     private String description;
 
-    private String annotation;
-
     private LocalDateTime creationDateTime;
     private LocalDateTime lastUpdateDateTime;
 

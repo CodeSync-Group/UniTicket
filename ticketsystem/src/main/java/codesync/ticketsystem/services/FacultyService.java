@@ -22,9 +22,10 @@ public class FacultyService {
     public List<FacultyEntity> getFaculties() { return facultyRepository.findAll();}
 
     @PreAuthorize("hasRole('ADMIN')")
-    public FacultyEntity updateFaculty(FacultyEntity faculty){
+    public FacultyEntity updateFaculty(FacultyEntity faculty) {
         FacultyEntity existingFaculty = facultyRepository.findById(faculty.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Unit with id " + faculty.getId() + " does not exist."));
+                .orElseThrow(() -> new EntityNotFoundException("Faculty with id " + faculty.getId() + " does not exist."));
+
         if (faculty.getFaculty() != null){
             existingFaculty.setFaculty(faculty.getFaculty());
         }

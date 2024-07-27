@@ -15,21 +15,19 @@ public class DepartmentService {
     DepartmentRepository departmentRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
-    public DepartmentEntity saveDepartment(DepartmentEntity department) {
-        return departmentRepository.save(department);
-    }
+    public DepartmentEntity saveDepartment(DepartmentEntity department) { return departmentRepository.save(department); }
 
     public List<DepartmentEntity> getDepartments() {
         return departmentRepository.findAll();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public DepartmentEntity updateDepartment(DepartmentEntity department){
+    public DepartmentEntity updateDepartment(DepartmentEntity department) {
         DepartmentEntity existingDepartment = departmentRepository.findById(department.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Unit with id " + department.getId() + " does not exist."));
+                .orElseThrow(() -> new EntityNotFoundException("Department with id " + department.getId() + " does not exist."));
 
-        if (department.getDeparment() != null){
-            existingDepartment.setDeparment(department.getDeparment());
+        if (department.getDepartment() != null){
+            existingDepartment.setDepartment(department.getDepartment());
         }
         return departmentRepository.save(existingDepartment);
     }

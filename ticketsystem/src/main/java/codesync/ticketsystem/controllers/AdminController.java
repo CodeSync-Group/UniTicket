@@ -1,11 +1,7 @@
 package codesync.ticketsystem.controllers;
 
-import codesync.ticketsystem.entities.DepartmentEntity;
-import codesync.ticketsystem.entities.FacultyEntity;
-import codesync.ticketsystem.entities.UserEntity;
-import codesync.ticketsystem.services.DepartmentService;
-import codesync.ticketsystem.services.FacultyService;
-import codesync.ticketsystem.services.UserService;
+import codesync.ticketsystem.entities.*;
+import codesync.ticketsystem.services.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +21,16 @@ public class AdminController {
     DepartmentService departmentService;
     @Autowired
     FacultyService facultyService;
+    @Autowired
+    TopicService topicService;
+    @Autowired
+    CategoryService categoryService;
+    @Autowired
+    NotificationService notificationService;
+    @Autowired
+    StatusService statusService;
+    @Autowired
+    LogService logService;
 
     @Operation(summary = "Update a user role")
     @ApiResponses(value = {
@@ -41,18 +47,18 @@ public class AdminController {
         return  ResponseEntity.ok(newUser);
     }
 
-    @Operation(summary = "Update a department")
-    @PutMapping("/departments")
-    public ResponseEntity<DepartmentEntity> updateDepartment(@RequestBody DepartmentEntity department)  {
-        DepartmentEntity updatedDepartment = departmentService.updateDepartment(department);
-        return ResponseEntity.ok(updatedDepartment);
-    }
-
     @Operation(summary = "Save a department")
     @PostMapping("/departments")
     public ResponseEntity<DepartmentEntity> saveDepartment(@RequestBody DepartmentEntity department) {
         DepartmentEntity newDepartment = departmentService.saveDepartment(department);
         return ResponseEntity.ok(newDepartment);
+    }
+
+    @Operation(summary = "Update a department")
+    @PutMapping("/departments")
+    public ResponseEntity<DepartmentEntity> updateDepartment(@RequestBody DepartmentEntity department)  {
+        DepartmentEntity updatedDepartment = departmentService.updateDepartment(department);
+        return ResponseEntity.ok(updatedDepartment);
     }
 
     @Operation(summary = "Delete a department")
@@ -80,6 +86,90 @@ public class AdminController {
     @DeleteMapping("/faculties/{id}")
     public ResponseEntity<Boolean> deleteFaculty(@PathVariable Long id) throws Exception {
         facultyService.deleteFaculty(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Save a topic")
+    @PostMapping("/topics")
+    public ResponseEntity<TopicEntity> saveTopic(@RequestBody TopicEntity topic) {
+        TopicEntity savedTopic = topicService.saveTopic(topic);
+        return ResponseEntity.ok(savedTopic);
+    }
+
+    @Operation(summary = "Update a topic")
+    @PutMapping("/topics")
+    public ResponseEntity<TopicEntity> updateTopic(@RequestBody TopicEntity topic)  {
+        TopicEntity updatedTopic = topicService.updateTopic(topic);
+        return ResponseEntity.ok(updatedTopic);
+    }
+
+    @Operation(summary = "Delete a topic")
+    @DeleteMapping("/topics/{id}")
+    public ResponseEntity<Boolean> deleteTopic(@PathVariable Long id) throws Exception {
+        topicService.deleteTopic(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Update a category")
+    @PutMapping("/categories")
+    public ResponseEntity<CategoryEntity> updateCategory(@RequestBody CategoryEntity category)  {
+        CategoryEntity updatedCategory = categoryService.updateCategory(category);
+        return ResponseEntity.ok(updatedCategory);
+    }
+
+    @Operation(summary = "Delete a category")
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<Boolean> deleteCategory(@PathVariable Long id) throws Exception {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Update a notification")
+    @PutMapping("/notifications")
+    public ResponseEntity<NotificationEntity> updateNotification(@RequestBody NotificationEntity notification)  {
+        NotificationEntity updatedNotification = notificationService.updateNotification(notification);
+        return ResponseEntity.ok(updatedNotification);
+    }
+
+    @Operation(summary = "Delete a notification")
+    @DeleteMapping("/notifications/{id}")
+    public ResponseEntity<Boolean> deleteNotification(@PathVariable Long id) throws Exception {
+        notificationService.deleteNotification(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Save a status")
+    @PostMapping("/statuses")
+    public ResponseEntity<StatusEntity> saveStatus(@RequestBody StatusEntity status) {
+        StatusEntity savedStatus = statusService.saveStatus(status);
+        return ResponseEntity.ok(savedStatus);
+    }
+
+    @Operation(summary = "Update a status")
+    @PutMapping("/statuses")
+    public ResponseEntity<StatusEntity> updateStatus(@RequestBody StatusEntity status)  {
+        StatusEntity updatedStatus = statusService.updateStatus(status);
+        return ResponseEntity.ok(updatedStatus);
+    }
+
+    @Operation(summary = "Delete a status")
+    @DeleteMapping("/statuses/{id}")
+    public ResponseEntity<Boolean> deleteStatus(@PathVariable Long id) throws Exception {
+        statusService.deleteStatus(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Update a log")
+    @PutMapping("/logs")
+    public ResponseEntity<LogEntity> updateLog(@RequestBody LogEntity log)  {
+        LogEntity updatedLog = logService.updateLog(log);
+        return ResponseEntity.ok(updatedLog);
+    }
+
+    @Operation(summary = "Delete a log")
+    @DeleteMapping("/logs/{id}")
+    public ResponseEntity<Boolean> deleteLog(@PathVariable Long id) throws Exception {
+        logService.deleteLog(id);
         return ResponseEntity.noContent().build();
     }
 }

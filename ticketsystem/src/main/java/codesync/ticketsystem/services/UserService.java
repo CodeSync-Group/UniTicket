@@ -40,6 +40,10 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<UserEntity> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
     public Boolean userExistByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
