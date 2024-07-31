@@ -36,7 +36,7 @@ public class MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(email);
             helper.setText(template, true);
-            helper.setFrom(new InternetAddress(MAIL_USER, "Code Sync Group"));
+            helper.setFrom(new InternetAddress(MAIL_USER, "Mensajeria UniTicket"));
             javaMailSender.send(message);
         } catch (MessagingException e) {
             throw new Exception(e.getMessage());
@@ -57,7 +57,7 @@ public class MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(email);
             helper.setText(template, true);
-            helper.setFrom(new InternetAddress(MAIL_USER, "Code Sync Group"));
+            helper.setFrom(new InternetAddress(MAIL_USER, "Mensajeria UniTicket"));
             javaMailSender.send(message);
         } catch (MessagingException e) {
             throw new Exception(e.getMessage());

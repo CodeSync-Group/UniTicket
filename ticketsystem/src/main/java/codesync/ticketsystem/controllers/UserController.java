@@ -28,7 +28,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content) })
     @PutMapping("/")
-    public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user) throws Exception {
+    public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user) {
         UserEntity newUser = userService.updateUser(user);
         return  ResponseEntity.ok(newUser);
     }
