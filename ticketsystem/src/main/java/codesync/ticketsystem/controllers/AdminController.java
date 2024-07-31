@@ -33,14 +33,6 @@ public class AdminController {
     LogService logService;
 
     @Operation(summary = "Update a user role")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User updated correctly",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserEntity.class)) }),
-            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content) })
     @PutMapping("/userRole")
     public ResponseEntity<UserEntity> updateUserRole(@RequestBody UserEntity user) throws Exception {
         UserEntity newUser = userService.updateUserRole(user);
