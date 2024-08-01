@@ -65,16 +65,23 @@ public class UserService {
             throw new SecurityException("Not authorized to update this user");
         }
 
-        if (user.getPassword() != null) {
-            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-
         if (user.getUsername() != null) {
             existingUser.setUsername(user.getUsername());
         }
 
         if (user.getUnit() != null) {
             existingUser.setUnit(user.getUnit());
+        }
+
+        return userRepository.save(existingUser);
+    }
+
+    public UserEntity updatePassword(UserEntity user) {
+        UserEntity existingUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + user.getId() + " does not exist."));
+
+        if (user.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
         return userRepository.save(existingUser);

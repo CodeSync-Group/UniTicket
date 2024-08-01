@@ -28,6 +28,8 @@ public class ProfileService {
     @Autowired
     UserService userService;
 
+    public ProfileEntity saveProfile(ProfileEntity profile) { return profileRepository.save(profile); }
+
     public List<ProfileEntity> getProfiles() {
         return profileRepository.findAll();
     }
@@ -162,8 +164,6 @@ public class ProfileService {
             if (bytes.length > maxFileSize) {
                 throw new Exception("File size must be less or equal to 5MB");
             }
-
-            System.out.println("Byte array length: " + bytes.length);
 
             return bytes;
         } catch (IOException e) {

@@ -38,6 +38,22 @@ public class JwtService {
                 .compact();
     }
 
+    public String getTokenForResetPassword(UserDetails user) {
+        return getTokenForResetPassword(new HashMap<>(), user);
+    }
+
+    private String getTokenForResetPassword(Map<String, Object> extraClaims, UserDetails user) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                //Token information
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000*60*10))
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     private Key getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);

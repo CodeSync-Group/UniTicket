@@ -32,27 +32,43 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponse register(RegisterRequest request) {
-        ProfileEntity profile = ProfileEntity.builder()
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
-                .secondSurname(request.getSecondSurname())
-                .email(request.getEmail())
-                .build();
+    public AuthResponse register(RegisterRequest request) throws Exception {
+        if (isAdmittedPassword(request.getPassword())) {
+            if (isAdmittedUsername(request.getUsername())) {
+                ProfileEntity profile = ProfileEntity.builder()
+                        .firstname(request.getFirstname())
+                        .lastname(request.getLastname())
+                        .secondSurname(request.getSecondSurname())
+                        .email(request.getEmail())
+                        .build();
 
-        ProfileEntity savedProfile = profileRepository.save(profile);
+                ProfileEntity savedProfile = profileRepository.save(profile);
 
-        UserEntity user = UserEntity.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(RoleEntity.EXTERNAL)
-                .profile(savedProfile)
-                .build();
+                UserEntity user = UserEntity.builder()
+                        .username(request.getUsername())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .role(RoleEntity.EXTERNAL)
+                        .profile(savedProfile)
+                        .build();
 
-        userRepository.save(user);
+                userRepository.save(user);
 
-        return AuthResponse.builder()
-                .token(jwtService.getToken(user))
-                .build();
+                return AuthResponse.builder()
+                        .token(jwtService.getToken(user))
+                        .build();
+            } else {
+                throw new Exception("Try with another username");
+            }
+        } else {
+            throw new Exception("Try with another password");
+        }
+    }
+
+    private boolean isAdmittedPassword(String password) {
+        return true;
+    }
+
+    private boolean isAdmittedUsername(String username) {
+        return true;
     }
 }
