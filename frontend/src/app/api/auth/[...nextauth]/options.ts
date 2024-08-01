@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
 
 export const options: NextAuthOptions = {
   providers: [
@@ -9,17 +10,28 @@ export const options: NextAuthOptions = {
         username: {
           label: "Username",
           type: "text",
-          placeholder: "Hola q onda",
         },
         password: {
           label: "Password",
           type: "password",
-          placeholder: "Your pass here",
         },
       },
       async authorize(credentials) {
         // aqui se verifican las credenciales, deberia ser el post al back
-        const user = { id: "42", name: "Dave", password: "nextauth" };
+        const res = await axios.post(
+          "", // AQUI FALTA CONFIGURAR EL ENDPOINT
+          {
+            username: credentials?.username,
+            password: credentials?.password,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const user = res.data;
+
         if (
           credentials?.username === user.name &&
           credentials?.password === user.password
@@ -29,4 +41,14 @@ export const options: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) token.user = user.role;
+      return token;
+    },
+    async session({ session, token }) {
+      if (session?.user) session.user.role = token.role;
+      return session;
+    },
+  },
 };
