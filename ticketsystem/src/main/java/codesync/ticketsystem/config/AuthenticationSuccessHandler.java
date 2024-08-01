@@ -49,7 +49,7 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
 
         String userEmail = (String) attributes.get("email");
 
-        //if some user already has a profile
+        //if the user already has a profile
         if (profileService.getProfileByEmail(userEmail).isPresent()) {
             ProfileEntity userProfile = profileService.getProfileByEmail(userEmail)
                     .orElseThrow(() -> new EntityNotFoundException("User profile with email " + userEmail + " does not exist."));
@@ -59,18 +59,7 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
 
             String token = jwtService.getToken(userEntity);
 
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonResponse = objectMapper.writeValueAsString(token);
-
-            response.getWriter().write(jsonResponse);
-            response.getWriter().flush();
-
-            //System.out.println("Handler token: " + token);
-
-            response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            responseSetter(response, token);
         } else {
             String name = (String) attributes.get("name");
 
@@ -111,9 +100,12 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
                     .email(userEmail)
                     .build();
 
-            System.out.println(registerRequest);
-
-            AuthResponse authResponse = authService.register(registerRequest);
+            AuthResponse authResponse = null;
+            try {
+                authResponse = authService.register(registerRequest);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             String token = authResponse.getToken();
 
             if (token != null) {
@@ -137,25 +129,27 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
 
                 if (picture != null) {
                     profileEntity.setPicture(picture);
-                    profileService.updateProfile(profileEntity);
+                    profileService.saveProfile(profileEntity);
                 }
             }
 
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonResponse = objectMapper.writeValueAsString(token);
-
-            response.getWriter().write(jsonResponse);
-            response.getWriter().flush();
-
-            System.out.println("Handler token: " + token);
-
-            response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+            responseSetter(response, token);
         }
 
         super.onAuthenticationSuccess(request, response, authentication);
+    }
+
+    private void responseSetter(HttpServletResponse response, String token) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(token);
+
+        response.getWriter().write(jsonResponse);
+        response.getWriter().flush();
+
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
     }
 
     private static String normalize(String input) {

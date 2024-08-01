@@ -30,7 +30,7 @@ public class SecurityConfig {
                                 .disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/auth/**","/security/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
 
                                 //REMOVE THIS CONFIG BEFORE RELEASE TO .authenticated()
