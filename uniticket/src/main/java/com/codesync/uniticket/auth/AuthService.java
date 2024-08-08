@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.regex.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +34,8 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) throws Exception {
-        if (isAdmittedPassword(request.getPassword())) {
-            if (isAdmittedUsername(request.getUsername())) {
+        if (isAdmittedUsername(request.getUsername())) {
+            if (isAdmittedPassword(request.getPassword())) {
                 ProfileEntity profile = ProfileEntity.builder()
                         .firstname(request.getFirstname())
                         .lastname(request.getLastname())
@@ -57,18 +58,41 @@ public class AuthService {
                         .token(jwtService.getToken(user))
                         .build();
             } else {
-                throw new Exception("Try with another username");
+                throw new Exception("Try with another password");
             }
         } else {
-            throw new Exception("Try with another password");
+            throw new Exception("Try with another username");
         }
     }
 
-    private boolean isAdmittedPassword(String password) {
-        return true;
+    private boolean isAdmittedUsername(String username) {
+        String regex = "^[a-zA-Z0-9.]+$";
+
+        Pattern p = Pattern.compile(regex);
+
+        if (username == null || username.equals("admin")) {
+            return false;
+        }
+
+        Matcher m = p.matcher(username);
+
+        return m.matches();
     }
 
-    private boolean isAdmittedUsername(String username) {
-        return true;
+    private boolean isAdmittedPassword(String password) {
+        String regex = "^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=.,])"
+                + "(?=\\S+$).{8,20}$";
+
+        Pattern p = Pattern.compile(regex);
+
+        if (password == null) {
+            return false;
+        }
+
+        Matcher m = p.matcher(password);
+
+        return m.matches();
     }
 }
