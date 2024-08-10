@@ -40,7 +40,7 @@ public class SecurityService {
             UserEntity userEntity = userService.getUserByProfileId(userProfile.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User with profile id " + userProfile.getId() + " does not exist."));
 
-            String token = jwtService.getTokenForResetPassword(userEntity);
+            String token = jwtService.getTokenForPasswordReset(userEntity);
 
             String url = createUrl(APP_URL + PORT, token, input);
 
@@ -52,7 +52,7 @@ public class SecurityService {
             ProfileEntity userProfile = profileService.getProfileById(userEntity.getProfile().getId())
                     .orElseThrow(() -> new EntityNotFoundException("User profile with id " + userEntity.getProfile().getId() + " does not exist."));
 
-            String token = jwtService.getTokenForResetPassword(userEntity);
+            String token = jwtService.getTokenForPasswordReset(userEntity);
 
             String url = createUrl(APP_URL + PORT, token, userProfile.getEmail());
 

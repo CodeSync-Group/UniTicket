@@ -38,11 +38,11 @@ public class JwtService {
                 .compact();
     }
 
-    public String getTokenForResetPassword(UserDetails user) {
-        return getTokenForResetPassword(new HashMap<>(), user);
+    public String getTokenForPasswordReset(UserDetails user) {
+        return getTokenForPasswordReset(new HashMap<>(), user);
     }
 
-    private String getTokenForResetPassword(Map<String, Object> extraClaims, UserDetails user) {
+    private String getTokenForPasswordReset(Map<String, Object> extraClaims, UserDetails user) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
