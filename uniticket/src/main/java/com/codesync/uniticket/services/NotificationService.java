@@ -1,6 +1,7 @@
 package com.codesync.uniticket.services;
 
 import com.codesync.uniticket.entities.*;
+import com.codesync.uniticket.events.TicketAnalystModifiedEvent;
 import com.codesync.uniticket.events.TicketCreatedEvent;
 import com.codesync.uniticket.repositories.NotificationRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,7 +33,7 @@ public class NotificationService {
         return notificationRepository.findAll();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public NotificationEntity updateNotification(NotificationEntity notification) {
         NotificationEntity existingNotification = notificationRepository.findById(notification.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Notification with id " + notification.getId() + " does not exist."));
@@ -52,7 +53,7 @@ public class NotificationService {
         return notificationRepository.save(existingNotification);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public boolean deleteNotification(Long id) throws Exception {
         try {
             notificationRepository.deleteById(id);
@@ -73,18 +74,40 @@ public class NotificationService {
         ProfileEntity creatorProfile = profileService.getProfileById(creatorUser.getProfile().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Profile with id " + creatorUser.getProfile().getId() + " does not exist."));
 
-        //TO CHANGE
-        StatusEntity status = statusService.getStatuses().get(0);
+        StatusEntity status = ticket.getStatus();
 
         NotificationEntity notification = NotificationEntity.builder()
                 .ticket(ticket)
                 .user(creatorUser)
-                //TO CHANGE
                 .status(status)
                 .build();
 
         saveNotification(notification);
 
         mailService.newTicketMail(creatorProfile.getEmail(), creatorProfile.getFirstname(), creatorProfile.getLastname(), String.valueOf(ticket.getId()));
+    }
+
+    @EventListener
+    public void handleTicketAnalystModifiedEventNotification(TicketAnalystModifiedEvent event) throws Exception {
+        TicketEntity ticket = event.getTicket();
+
+        UserEntity creatorUser = userService.getUserById(ticket.getCreator().getId())
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + ticket.getCreator().getId() + " does not exist."));
+
+
+        ProfileEntity creatorProfile = profileService.getProfileById(creatorUser.getProfile().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Profile with id " + creatorUser.getProfile().getId() + " does not exist."));
+
+        StatusEntity status = ticket.getStatus();
+
+        NotificationEntity notification = NotificationEntity.builder()
+                .ticket(ticket)
+                .user(creatorUser)
+                .status(status)
+                .build();
+
+        saveNotification(notification);
+
+        mailService.updatedTicketMail(creatorProfile.getEmail(), creatorProfile.getFirstname(), creatorProfile.getLastname(), status.getStatus(), String.valueOf(ticket.getId()));
     }
 }

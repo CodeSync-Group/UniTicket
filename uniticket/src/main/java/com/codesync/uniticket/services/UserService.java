@@ -87,8 +87,11 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public UserEntity updateUserRole(UserEntity user) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication);
+
         UserEntity existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + user.getId() + " does not exist."));
 
@@ -103,7 +106,7 @@ public class UserService {
         throw new Exception("Try a different role.");
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public boolean deleteUser(Long id) throws Exception {
         try {
             userRepository.deleteById(id);

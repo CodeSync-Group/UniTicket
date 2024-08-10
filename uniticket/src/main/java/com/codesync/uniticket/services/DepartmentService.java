@@ -14,14 +14,14 @@ public class DepartmentService {
     @Autowired
     DepartmentRepository departmentRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public DepartmentEntity saveDepartment(DepartmentEntity department) { return departmentRepository.save(department); }
 
     public List<DepartmentEntity> getDepartments() {
         return departmentRepository.findAll();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public DepartmentEntity updateDepartment(DepartmentEntity department) {
         DepartmentEntity existingDepartment = departmentRepository.findById(department.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Department with id " + department.getId() + " does not exist."));
@@ -32,7 +32,7 @@ public class DepartmentService {
         return departmentRepository.save(existingDepartment);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public boolean deleteDepartment(Long id) throws Exception {
         try {
             departmentRepository.deleteById(id);

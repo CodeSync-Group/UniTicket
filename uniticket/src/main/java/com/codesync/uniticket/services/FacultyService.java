@@ -14,14 +14,14 @@ public class FacultyService {
     @Autowired
     FacultyRepository facultyRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public FacultyEntity saveFaculty(FacultyEntity faculty) {
         return facultyRepository.save(faculty);
     }
 
     public List<FacultyEntity> getFaculties() { return facultyRepository.findAll();}
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public FacultyEntity updateFaculty(FacultyEntity faculty) {
         FacultyEntity existingFaculty = facultyRepository.findById(faculty.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Faculty with id " + faculty.getId() + " does not exist."));
@@ -33,7 +33,7 @@ public class FacultyService {
         return facultyRepository.save(existingFaculty);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public boolean deleteFaculty(Long id) throws Exception {
         try {
             facultyRepository.deleteById(id);

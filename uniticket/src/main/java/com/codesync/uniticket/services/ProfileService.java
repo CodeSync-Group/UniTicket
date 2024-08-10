@@ -93,7 +93,7 @@ public class ProfileService {
         return profileRepository.save(existingProfile);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public boolean deleteProfile(Long id) throws Exception {
         try {
             profileRepository.deleteById(id);

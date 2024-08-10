@@ -43,7 +43,7 @@ public class MailService {
         }
     }
 
-    public void updatedTicketMail(String email, String firstname, String lastname, String status, String percentage, String ticketId) throws Exception {
+    public void updatedTicketMail(String email, String firstname, String lastname, String status, String ticketId) throws Exception {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         String template = loadEmailTemplate("updatedTicket.html");

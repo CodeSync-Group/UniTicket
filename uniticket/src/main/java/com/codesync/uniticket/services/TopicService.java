@@ -14,14 +14,14 @@ public class TopicService {
     @Autowired
     private TopicRepository topicRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public TopicEntity saveTopic(TopicEntity topic) {
         return topicRepository.save(topic);
     }
 
     public List<TopicEntity> getTopics() { return topicRepository.findAll(); }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public TopicEntity updateTopic(TopicEntity topic) {
         TopicEntity existingTopic = topicRepository.findById(topic.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Topic with id " + topic.getId() + " does not exist."));
@@ -33,7 +33,7 @@ public class TopicService {
         return topicRepository.save(existingTopic);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public boolean deleteTopic(Long id) throws Exception {
         try {
             topicRepository.deleteById(id);

@@ -20,10 +20,10 @@ public class CategoryService {
 
     public List<CategoryEntity> getCategories() { return categoryRepository.findAll();}
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public CategoryEntity updateCategory(CategoryEntity category) {
         CategoryEntity existingCategory = categoryRepository.findById(category.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Faculty with id " + category.getId() + " does not exist."));
+                .orElseThrow(() -> new EntityNotFoundException("Category with id " + category.getId() + " does not exist."));
 
         if (category.getFaculty() != null){
             existingCategory.setFaculty(category.getFaculty());
@@ -40,7 +40,7 @@ public class CategoryService {
         return categoryRepository.save(existingCategory);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public boolean deleteCategory(Long id) throws Exception {
         try {
             categoryRepository.deleteById(id);
