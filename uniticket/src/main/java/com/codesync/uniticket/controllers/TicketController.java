@@ -29,4 +29,11 @@ public class TicketController {
         List<TicketEntity> tickets = ticketService.getTickets();
         return ResponseEntity.ok(tickets);
     }
+
+    @Operation(summary = "Update a ticket")
+    @PutMapping("/")
+    public ResponseEntity<TicketEntity> updateTicket(@RequestBody TicketEntity ticket) throws Exception {
+        TicketEntity updatedTicket = ticketService.updateTicket(ticket);
+        return ResponseEntity.ok(updatedTicket);
+    }
 }
