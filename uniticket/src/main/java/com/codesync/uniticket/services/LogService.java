@@ -89,7 +89,6 @@ public class LogService {
                 .annotation(annotation)
                 .creator(ticket.getCreator())
                 .ticket(ticket)
-                .headship(ticket.getHeadship())
                 .analyst(ticket.getAnalyst())
                 .unit(ticket.getUnit())
                 .category(ticket.getCategory())

@@ -42,6 +42,10 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false)
     private RoleEntity role;
 
+    @OneToOne
+    @JoinColumn(name = "configurationId", nullable = false)
+    private ConfigurationEntity configuration;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (role != null) {

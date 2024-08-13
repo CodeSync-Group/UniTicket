@@ -20,38 +20,37 @@ public class LogEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDateTime dateTime;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RoleEntity role;
 
+    @Column(nullable = false)
     private String annotation;
 
     @ManyToOne
-    @JoinColumn(name = "creatorId")
+    @JoinColumn(name = "creatorId", nullable = false)
     private UserEntity creator;
-
-    @ManyToOne
-    @JoinColumn(name = "headshipId")
-    private UserEntity headship;
 
     @ManyToOne
     @JoinColumn(name = "analystId")
     private UserEntity analyst;
 
     @ManyToOne
-    @JoinColumn(name = "ticketId")
+    @JoinColumn(name = "ticketId", nullable = false)
     private TicketEntity ticket;
 
     @ManyToOne
-    @JoinColumn(name = "unitId")
+    @JoinColumn(name = "unitId", nullable = false)
     private UnitEntity unit;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(name = "categoryId", nullable = false)
     private CategoryEntity category;
 
     @ManyToOne
-    @JoinColumn(name = "statusId")
+    @JoinColumn(name = "statusId", nullable = false)
     private StatusEntity status;
 }

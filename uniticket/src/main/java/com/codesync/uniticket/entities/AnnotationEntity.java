@@ -18,13 +18,14 @@ public class AnnotationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String annotation;
 
     @ManyToOne
-    @JoinColumn(name = "ticketId")
+    @JoinColumn(name = "ticketId", nullable = false)
     private TicketEntity ticket;
 
     @ManyToOne
-    @JoinColumn(name = "creatorId")
+    @JoinColumn(name = "creatorId", nullable = false)
     private UserEntity creator;
 }

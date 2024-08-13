@@ -24,6 +24,8 @@ public class NotificationService {
     MailService mailService;
     @Autowired
     StatusService statusService;
+    @Autowired
+    ConfigurationService configurationService;
 
     public NotificationEntity saveNotification(NotificationEntity notification) {
         return notificationRepository.save(notification);
@@ -69,22 +71,25 @@ public class NotificationService {
 
         UserEntity creatorUser = userService.getUserById(ticket.getCreator().getId())
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + ticket.getCreator().getId() + " does not exist."));
-
-
         ProfileEntity creatorProfile = profileService.getProfileById(creatorUser.getProfile().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Profile with id " + creatorUser.getProfile().getId() + " does not exist."));
 
         StatusEntity status = ticket.getStatus();
 
-        NotificationEntity notification = NotificationEntity.builder()
+        NotificationEntity creatorUserNotification = NotificationEntity.builder()
                 .ticket(ticket)
                 .user(creatorUser)
                 .status(status)
                 .build();
 
-        saveNotification(notification);
+        saveNotification(creatorUserNotification);
 
-        mailService.newTicketMail(creatorProfile.getEmail(), creatorProfile.getFirstname(), creatorProfile.getLastname(), String.valueOf(ticket.getId()));
+        ConfigurationEntity creatorUserConfig = configurationService.getConfigurationById(creatorUser.getConfiguration().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Configuration with id " + creatorUser.getConfiguration().getId() + " does not exist."));
+
+        if (creatorUserConfig.isMail_notifications()) {
+            mailService.newTicketMail(creatorProfile.getEmail(), creatorProfile.getFirstname(), creatorProfile.getLastname(), String.valueOf(ticket.getId()));
+        }
     }
 
     @EventListener
@@ -93,10 +98,13 @@ public class NotificationService {
 
         UserEntity creatorUser = userService.getUserById(ticket.getCreator().getId())
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + ticket.getCreator().getId() + " does not exist."));
-
-
         ProfileEntity creatorProfile = profileService.getProfileById(creatorUser.getProfile().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Profile with id " + creatorUser.getProfile().getId() + " does not exist."));
+
+        UserEntity analystUser = userService.getUserById(ticket.getAnalyst().getId())
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + ticket.getAnalyst().getId() + " does not exist."));
+        ProfileEntity analystProfile = profileService.getProfileById(analystUser.getProfile().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Profile with id " + analystUser.getProfile().getId() + " does not exist."));
 
         StatusEntity status = ticket.getStatus();
 
@@ -106,8 +114,29 @@ public class NotificationService {
                 .status(status)
                 .build();
 
-        saveNotification(notification);
+        NotificationEntity analystNotification = NotificationEntity.builder()
+                .ticket(ticket)
+                .user(analystUser)
+                .status(status)
+                .build();
 
-        mailService.updatedTicketMail(creatorProfile.getEmail(), creatorProfile.getFirstname(), creatorProfile.getLastname(), status.getStatus(), String.valueOf(ticket.getId()));
+        saveNotification(notification);
+        saveNotification(analystNotification);
+
+        ConfigurationEntity userConfig = configurationService.getConfigurationById(creatorUser.getConfiguration().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Configuration with id " + creatorUser.getConfiguration().getId() + " does not exist."));
+
+        ConfigurationEntity analystConfig = configurationService.getConfigurationById(creatorUser.getConfiguration().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Configuration with id " + analystUser.getConfiguration().getId() + " does not exist."));
+
+
+        if (userConfig.isMail_notifications()) {
+            mailService.updatedTicketMail(creatorProfile.getEmail(), creatorProfile.getFirstname(), creatorProfile.getLastname(), status.getStatus(), String.valueOf(ticket.getId()));
+        }
+
+        //Here will go the method that emails the analyst to advice the new ticket that the unit assigned him
+        if (analystConfig.isMail_notifications()) {
+            mailService.newAnalystAssigned(analystProfile.getEmail(), analystProfile.getFirstname(), analystProfile.getLastname(), String.valueOf(ticket.getId()));
+        }
     }
 }

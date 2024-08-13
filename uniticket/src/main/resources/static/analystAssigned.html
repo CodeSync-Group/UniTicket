@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Confirmation</title>
+    <style>
+        .boxCont {
+            background-color: #e8e8e8;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .ticketDetails, .ticketStatus {
+            margin-bottom: 10px;
+        }
+
+        .ticketCode, .statusValue {
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .progressBarContainer {
+            background-color: #ccc;
+            border-radius: 8px;
+            height: 20px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .progressBar {
+            height: 100%;
+            background-color: #4CAF50;
+            border-radius: 8px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .ticketLabel, .statusLabel {
+            font-size: 16px;
+            color: #777;
+            font-weight: normal;
+        }
+
+        .statusValue {
+            color: #009688; /* A greenish shade, adjust based on status perhaps */
+        }
+
+    </style>
+</head>
+<body>
+<div class="bg">
+    <div class="cont">
+        <p><strong>Estimado {user},</strong></p>
+        <p>Le informamos que se le ha asignado un nuevo ticket.</p>
+        <div class="boxCont">
+            <div class="ticketDetails">
+                <p class="ticketLabel">Número de Ticket:</p>
+                <p class="ticketCode">{ticketId}</p>
+            </div>
+        </div>
+        <p class="footer">Este mensaje de correo electrónico se ha enviado desde una dirección exclusivamente para envíos. No responda a este mensaje.</p>
+    </div>
+</div>
+</body>
+</html>

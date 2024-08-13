@@ -103,6 +103,26 @@ public class MailService {
         }
     }
 
+    public void newAnalystAssigned(String email, String firstname, String lastname, String ticketId) throws Exception {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        String template = loadEmailTemplate("analystAssigned.html");
+        template = template.replace("{user}", firstname + " " + lastname);
+        template = template.replace("{ticketId}", ticketId);
+
+
+        try {
+            message.setSubject("Ticket #" + ticketId + " asignado a su perfil");
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(email);
+            helper.setText(template, true);
+            helper.setFrom(new InternetAddress(MAIL_USER, "Mensajeria UniTicket"));
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
     public String loadEmailTemplate(String filename) throws IOException {
         ClassPathResource resource = new ClassPathResource("static/" + filename);
         InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);

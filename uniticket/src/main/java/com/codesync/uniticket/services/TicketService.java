@@ -1,7 +1,6 @@
 package com.codesync.uniticket.services;
 
-import com.codesync.uniticket.entities.StatusEntity;
-import com.codesync.uniticket.entities.TicketEntity;
+import com.codesync.uniticket.entities.*;
 import com.codesync.uniticket.events.TicketAnalystModifiedEvent;
 import com.codesync.uniticket.events.TicketCreatedEvent;
 import com.codesync.uniticket.repositories.TicketRepository;
@@ -24,6 +23,12 @@ public class TicketService {
     @Autowired
     StatusService statusService;
     @Autowired
+    CategoryService categoryService;
+    @Autowired
+    UnitService unitService;
+    @Autowired
+    FacultyService facultyService;
+    @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     @Value("1")
@@ -32,13 +37,29 @@ public class TicketService {
     @Value("2")
     private Long NEW_ANALYST_STATUS_ID;
 
-    public TicketEntity saveTicket(TicketEntity ticket) {
-        TicketEntity savedTicket = ticketRepository.save(ticket);
+    @Value("1")
+    private Long INFRASTRUCTURE_UNIT_ID;
 
+    @Value("1")
+    private Long INFRASTRUCTURE_TOPIC_ID;
+
+    public TicketEntity saveTicket(TicketEntity ticket) {
         StatusEntity status = statusService.getStatusById(NEW_TICKET_STATUS_ID)
                 .orElseThrow(() -> new EntityNotFoundException("Status with id " + NEW_TICKET_STATUS_ID + " does not exist."));
+        ticket.setStatus(status);
 
-        savedTicket.setStatus(status);
+        //Here we have to set the unit of the new ticket
+        CategoryEntity category = categoryService.getCategoryById(ticket.getCategory().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Category with id " + ticket.getCategory().getId() + " does not exist."));
+
+        if (Objects.equals(category.getTopic().getId(), INFRASTRUCTURE_TOPIC_ID)) {
+            UnitEntity engineeringUnit = unitService.getUnitById(INFRASTRUCTURE_UNIT_ID)
+                    .orElseThrow(() -> new EntityNotFoundException("Unit with " + INFRASTRUCTURE_UNIT_ID + " does not exist."));
+
+            ticket.setUnit(engineeringUnit);
+        }
+
+        TicketEntity savedTicket = ticketRepository.save(ticket);
 
         eventPublisher.publishEvent(new TicketCreatedEvent(this, savedTicket));
         return savedTicket;
@@ -69,7 +90,16 @@ public class TicketService {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'HEADUNIT', 'HEADSHIP')")
     private TicketEntity updateTicketAnalyst(TicketEntity existingTicket, TicketEntity ticket) throws Exception {
-        if (!Objects.equals(existingTicket.getAnalyst().getId(), ticket.getAnalyst().getId())) {
+        if (existingTicket.getAnalyst() != null && !Objects.equals(ticket.getAnalyst().getId(), existingTicket.getAnalyst().getId())) {
+            StatusEntity status = statusService.getStatusById(NEW_ANALYST_STATUS_ID)
+                    .orElseThrow(() -> new EntityNotFoundException("Status with id " + NEW_ANALYST_STATUS_ID + " does not exist."));
+
+            existingTicket.setStatus(status);
+            existingTicket.setAnalyst(ticket.getAnalyst());
+            eventPublisher.publishEvent(new TicketAnalystModifiedEvent(this, existingTicket));
+
+            return existingTicket;
+        } else if (existingTicket.getAnalyst() == null) {
             StatusEntity status = statusService.getStatusById(NEW_ANALYST_STATUS_ID)
                     .orElseThrow(() -> new EntityNotFoundException("Status with id " + NEW_ANALYST_STATUS_ID + " does not exist."));
 
@@ -79,6 +109,7 @@ public class TicketService {
 
             return existingTicket;
         }
-        throw new Exception("The new analyst cant be the same");
+
+        throw new Exception("The analyst cannot be the same and must not be null");
     }
 }

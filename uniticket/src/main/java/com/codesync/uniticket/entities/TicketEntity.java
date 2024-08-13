@@ -18,33 +18,33 @@ public class TicketEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String subject;
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private LocalDateTime creationDateTime;
+    @Column(nullable = false)
     private LocalDateTime lastUpdateDateTime;
 
     @ManyToOne
-    @JoinColumn(name = "creatorId")
+    @JoinColumn(name = "creatorId", nullable = false)
     private UserEntity creator;
-
-    @ManyToOne
-    @JoinColumn(name = "headshipId")
-    private UserEntity headship;
 
     @ManyToOne
     @JoinColumn(name = "analystId")
     private UserEntity analyst;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(name = "categoryId", nullable = false)
     private CategoryEntity category;
 
     @ManyToOne
-    @JoinColumn(name = "statusId")
+    @JoinColumn(name = "statusId", nullable = false)
     private StatusEntity status;
 
     @ManyToOne
-    @JoinColumn(name = "unitId")
+    @JoinColumn(name = "unitId", nullable = false)
     private UnitEntity unit;
 }

@@ -19,14 +19,14 @@ public class CategoryEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "facultyId")
+    @JoinColumn(name = "facultyId", nullable = false)
     private FacultyEntity faculty;
 
     @ManyToOne
-    @JoinColumn(name = "departmentId")
+    @JoinColumn(name = "departmentId", nullable = false)
     private DepartmentEntity department;
 
     @ManyToOne
-    @JoinColumn(name = "topicId")
+    @JoinColumn(name = "topicId", nullable = false)
     private TopicEntity topic;
 }

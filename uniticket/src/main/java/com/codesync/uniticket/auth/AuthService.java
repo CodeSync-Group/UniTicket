@@ -1,9 +1,11 @@
 package com.codesync.uniticket.auth;
 
+import com.codesync.uniticket.entities.ConfigurationEntity;
 import com.codesync.uniticket.entities.ProfileEntity;
 import com.codesync.uniticket.entities.UserEntity;
 import com.codesync.uniticket.entities.RoleEntity;
 import com.codesync.uniticket.jwt.JwtService;
+import com.codesync.uniticket.repositories.ConfigurationRepository;
 import com.codesync.uniticket.repositories.ProfileRepository;
 import com.codesync.uniticket.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final ConfigurationRepository configurationRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -36,6 +39,13 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) throws Exception {
         if (isAdmittedUsername(request.getUsername())) {
             if (isAdmittedPassword(request.getPassword())) {
+                ConfigurationEntity configuration = ConfigurationEntity.builder()
+                        .mail_notifications(true)
+                        .push_notifications(true)
+                        .build();
+
+                ConfigurationEntity savedConfiguration = configurationRepository.save(configuration);
+
                 ProfileEntity profile = ProfileEntity.builder()
                         .firstname(request.getFirstname())
                         .lastname(request.getLastname())
@@ -50,6 +60,7 @@ public class AuthService {
                         .password(passwordEncoder.encode(request.getPassword()))
                         .role(RoleEntity.EXTERNAL)
                         .profile(savedProfile)
+                        .configuration(savedConfiguration)
                         .build();
 
                 userRepository.save(user);

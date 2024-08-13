@@ -19,5 +19,6 @@ public class FacultyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String faculty;
 }

@@ -19,14 +19,14 @@ public class NotificationEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "userId", nullable = false)
     private UserEntity user;
 
     @ManyToOne
-    @JoinColumn(name = "statusId")
+    @JoinColumn(name = "statusId", nullable = false)
     private StatusEntity status;
 
     @ManyToOne
-    @JoinColumn(name = "ticketId")
+    @JoinColumn(name = "ticketId", nullable = false)
     private TicketEntity ticket;
 }

@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -19,6 +20,8 @@ public class CategoryService {
     }
 
     public List<CategoryEntity> getCategories() { return categoryRepository.findAll();}
+
+    public Optional<CategoryEntity> getCategoryById(Long id) { return categoryRepository.findById(id); }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public CategoryEntity updateCategory(CategoryEntity category) {

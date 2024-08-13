@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UnitService {
@@ -22,6 +23,8 @@ public class UnitService {
     public List<UnitEntity> getUnits() {
         return unitRepository.findAll();
     }
+
+    public Optional<UnitEntity> getUnitById(Long id) { return unitRepository.findById(id); }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public UnitEntity updateUnit(UnitEntity unit) {
