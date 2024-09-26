@@ -27,6 +27,8 @@ public class AdminController {
     StatusService statusService;
     @Autowired
     LogService logService;
+    @Autowired
+    UnitService unitService;
 
     @Operation(summary = "Update a user role")
     @PutMapping("/userRole")
@@ -159,5 +161,12 @@ public class AdminController {
     public ResponseEntity<Boolean> deleteLog(@PathVariable Long id) throws Exception {
         logService.deleteLog(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Save a unit")
+    @PostMapping("/units")
+    public ResponseEntity<UnitEntity> saveUnit(@RequestBody UnitEntity unit) {
+        UnitEntity savedUnit = unitService.saveUnit(unit);
+        return ResponseEntity.ok(savedUnit);
     }
 }

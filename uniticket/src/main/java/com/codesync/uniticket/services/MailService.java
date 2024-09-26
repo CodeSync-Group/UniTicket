@@ -43,6 +43,15 @@ public class MailService {
                 case "NEW_TICKET":
                     message.setSubject("Ticket #" + emailDetails.getTicketId() + " creado correctamente");
                     break;
+                case "TICKET_UPDATED":
+                    message.setSubject("Ticket #" + emailDetails.getTicketId() + " modificado recientemente");
+                    break;
+                case "ANALYST_ASSIGNED":
+                    message.setSubject("Ticket #" + emailDetails.getTicketId() + " asignado a su perfil");
+                    break;
+                case "RESET_PASSWORD":
+                    message.setSubject("Ahora es más fácil volver a acceder a UniTicket");
+                    break;
                 case "PASSWORD_CHANGED":
                     message.setSubject("Cambio de contraseña realizado");
                     break;
@@ -75,83 +84,61 @@ public class MailService {
     }
 
     public void updatedTicketMail(String email, String firstname, String lastname, String status, String ticketId) throws Exception {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
         String template = loadEmailTemplate("updatedTicket.html");
         template = template.replace("{user}", firstname + " " + lastname);
         template = template.replace("{ticketId}", ticketId);
         template = template.replace("{newStatus}", status);
 
-
-        try {
-            message.setSubject("Ticket #" + ticketId + " modificado recientemente");
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(email);
-            helper.setText(template, true);
-            helper.setFrom(new InternetAddress(MAIL_USER, "Mensajeria UniTicket"));
-            javaMailSender.send(message);
-        } catch (MessagingException e) {
-            throw new Exception(e.getMessage());
-        }
+        rabbitTemplate.convertAndSend(emailExchange,
+                emailRoutingKey,
+                EmailDetails.builder()
+                        .recipient(email)
+                        .template(template)
+                        .type("TICKET_UPDATED")
+                        .ticketId(ticketId)
+                        .build());
     }
 
     public void resetPasswordMail(String email, String firstname, String lastname, String url) throws Exception {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
         String template = loadEmailTemplate("resetPassword.html");
         template = template.replace("{user}", firstname + " " + lastname);
         template = template.replace("{url}", url);
 
-
-        try {
-            message.setSubject(firstname + " " + lastname + ", ahora es más fácil volver a acceder a UniTicket");
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(email);
-            helper.setText(template, true);
-            helper.setFrom(new InternetAddress(MAIL_USER, "Mensajeria UniTicket"));
-            javaMailSender.send(message);
-        } catch (MessagingException e) {
-            throw new Exception(e.getMessage());
-        }
+        rabbitTemplate.convertAndSend(emailExchange,
+                emailRoutingKey,
+                EmailDetails.builder()
+                        .recipient(email)
+                        .template(template)
+                        .type("RESET_PASSWORD")
+                        .build());
     }
 
     public void passwordChangedMail(String email, String firstname, String lastname) throws Exception {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
         String template = loadEmailTemplate("passwordChanged.html");
         template = template.replace("{user}", firstname + " " + lastname);
 
-
-        try {
-            message.setSubject("Cambio de contraseña realizado");
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(email);
-            helper.setText(template, true);
-            helper.setFrom(new InternetAddress(MAIL_USER, "Mensajeria UniTicket"));
-            javaMailSender.send(message);
-        } catch (MessagingException e) {
-            throw new Exception(e.getMessage());
-        }
+        rabbitTemplate.convertAndSend(emailExchange,
+                emailRoutingKey,
+                EmailDetails.builder()
+                        .recipient(email)
+                        .template(template)
+                        .type("PASSWORD_CHANGED")
+                        .build());
     }
 
     public void newAnalystAssigned(String email, String firstname, String lastname, String ticketId) throws Exception {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
         String template = loadEmailTemplate("analystAssigned.html");
         template = template.replace("{user}", firstname + " " + lastname);
         template = template.replace("{ticketId}", ticketId);
 
 
-        try {
-            message.setSubject("Ticket #" + ticketId + " asignado a su perfil");
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(email);
-            helper.setText(template, true);
-            helper.setFrom(new InternetAddress(MAIL_USER, "Mensajeria UniTicket"));
-            javaMailSender.send(message);
-        } catch (MessagingException e) {
-            throw new Exception(e.getMessage());
-        }
+        rabbitTemplate.convertAndSend(emailExchange,
+                emailRoutingKey,
+                EmailDetails.builder()
+                        .recipient(email)
+                        .template(template)
+                        .type("ANALYST_ASSIGNED")
+                        .build());
     }
 
     public String loadEmailTemplate(String filename) throws IOException {

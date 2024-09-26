@@ -98,6 +98,8 @@ public class TicketService {
             existingTicket.setAnalyst(ticket.getAnalyst());
             eventPublisher.publishEvent(new TicketAnalystModifiedEvent(this, existingTicket));
 
+            //Analyze that the analyst assigned is actually an analyst
+
             return existingTicket;
         } else if (existingTicket.getAnalyst() == null) {
             StatusEntity status = statusService.getStatusById(NEW_ANALYST_STATUS_ID)
