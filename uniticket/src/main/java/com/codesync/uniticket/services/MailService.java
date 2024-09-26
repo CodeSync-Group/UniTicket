@@ -138,6 +138,7 @@ public class MailService {
                         .recipient(email)
                         .template(template)
                         .type("ANALYST_ASSIGNED")
+                        .ticketId(ticketId)
                         .build());
     }
 

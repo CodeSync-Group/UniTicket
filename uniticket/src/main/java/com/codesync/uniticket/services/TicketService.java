@@ -90,6 +90,13 @@ public class TicketService {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'HEADUNIT', 'HEADSHIP')")
     private TicketEntity updateTicketAnalyst(TicketEntity existingTicket, TicketEntity ticket) throws Exception {
+        UserEntity existingUser = userService.getUserById(ticket.getAnalyst().getId())
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + ticket.getAnalyst().getId() + " does not exist."));
+
+        if (!Objects.equals(existingUser.getRole().toString(), "ANALYST")) {
+            throw new Exception("The user assigned as analyst must be an analyst");
+        }
+
         if (existingTicket.getAnalyst() != null && !Objects.equals(ticket.getAnalyst().getId(), existingTicket.getAnalyst().getId())) {
             StatusEntity status = statusService.getStatusById(NEW_ANALYST_STATUS_ID)
                     .orElseThrow(() -> new EntityNotFoundException("Status with id " + NEW_ANALYST_STATUS_ID + " does not exist."));
