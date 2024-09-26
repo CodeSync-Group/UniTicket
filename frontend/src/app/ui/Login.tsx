@@ -35,12 +35,12 @@ export default function Login() {
           </div>
         </section>
         <section className="flex flex-row w-full justify-center">
-          <div className="flex w-1/2 gap-1 justify-start text-sm">
+          <div className="flex w-2/5 gap-1 justify-start text-sm">
             <a className="flex flex-row w-full text-cyan-600 underline" href="">
               Register now
             </a>
           </div>
-          <span className="w-1/2 flex justify-end text-sm ">
+          <span className="w-3/5 flex justify-end text-sm ">
             <a href="" className="text-gray-400">
               Forgot password?
             </a>
